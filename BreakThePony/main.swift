@@ -8,5 +8,7 @@
 
 import Foundation
 
-print("Hello, World!")
-
+let client = CentralBluetoothClient()
+client.start()
+sleep(3 * 60)
+client.stop()
