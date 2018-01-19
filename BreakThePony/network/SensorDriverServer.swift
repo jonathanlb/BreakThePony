@@ -60,14 +60,14 @@ class ServerConnection {
   private let socketFd = socket(AF_INET, SOCK_STREAM, 0)
   
   private let BACKLOG: Int32 = 10
-  private let PORT: in_port_t = 9878
+  private static let PORT: in_port_t = 9878
   private let SOCK_LEN = socklen_t(MemoryLayout<sockaddr_in>.size)
   
-  init() throws {
+  init(port: in_port_t = PORT) throws {
     memset(&sockAddr, 0, Int(SOCK_LEN))
     sockAddr.sin_addr.s_addr = INADDR_ANY.bigEndian
     sockAddr.sin_family = sa_family_t(AF_INET)
-    sockAddr.sin_port = PORT.bigEndian
+    sockAddr.sin_port = port.bigEndian
     
     if bind(socketFd, safeSockAddr(sa_in: sockAddr), SOCK_LEN) != 0 {
       throw SensorDriverError.bind(errno)

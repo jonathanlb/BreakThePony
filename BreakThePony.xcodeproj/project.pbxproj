@@ -7,14 +7,27 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		AB3DB794200533B600232181 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB3DB793200533B600232181 /* main.swift */; };
-		AB3DB7A6200534EF00232181 /* BluetoothTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB3DB7A5200534EF00232181 /* BluetoothTests.swift */; };
-		AB3DB7AD2005354F00232181 /* CentralBluetoothClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB3DB7AC2005354F00232181 /* CentralBluetoothClient.swift */; };
-		AB3DB7AE2005354F00232181 /* CentralBluetoothClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB3DB7AC2005354F00232181 /* CentralBluetoothClient.swift */; };
+		AB3D57092010FE8F0075255B /* CentralBluetoothClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB3D57082010FE8F0075255B /* CentralBluetoothClient.swift */; };
+		AB576888200E7C2000A04B20 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB576887200E7C2000A04B20 /* main.swift */; };
+		AB576891200E7C9600A04B20 /* SensorDriverServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB576890200E7C9600A04B20 /* SensorDriverServer.swift */; };
+		ABF133F2201286DD00B40573 /* SensorDriverServerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABF133F1201286DD00B40573 /* SensorDriverServerTests.swift */; };
+		ABF133F32012875D00B40573 /* SensorDriverServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB576890200E7C9600A04B20 /* SensorDriverServer.swift */; };
+		ABFFCE8D201273D200C522B3 /* BluetoothTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB6054AD20127134008B2EE0 /* BluetoothTests.swift */; };
+		ABFFCE902012743100C522B3 /* CentralBluetoothClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB3D57082010FE8F0075255B /* CentralBluetoothClient.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		ABFFCE8E2012742400C522B3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AB57687C200E7C2000A04B20 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AB576883200E7C2000A04B20;
+			remoteInfo = BreakThePony;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXCopyFilesBuildPhase section */
-		AB3DB78E200533B600232181 /* CopyFiles */ = {
+		AB576882200E7C2000A04B20 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = /usr/share/man/man1/;
@@ -26,23 +39,26 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		AB3DB790200533B600232181 /* BreakThePony */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = BreakThePony; sourceTree = BUILT_PRODUCTS_DIR; };
-		AB3DB793200533B600232181 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
-		AB3DB7A3200534EF00232181 /* BreakThePonyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BreakThePonyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		AB3DB7A5200534EF00232181 /* BluetoothTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothTests.swift; sourceTree = "<group>"; };
-		AB3DB7A7200534EF00232181 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		AB3DB7AC2005354F00232181 /* CentralBluetoothClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CentralBluetoothClient.swift; sourceTree = "<group>"; };
+		AB3D57082010FE8F0075255B /* CentralBluetoothClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CentralBluetoothClient.swift; sourceTree = "<group>"; };
+		AB4C50FA20126C9000DBF37F /* BreakThePonyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BreakThePonyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		AB576884200E7C2000A04B20 /* BreakThePony */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = BreakThePony; sourceTree = BUILT_PRODUCTS_DIR; };
+		AB576887200E7C2000A04B20 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		AB576890200E7C9600A04B20 /* SensorDriverServer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SensorDriverServer.swift; sourceTree = "<group>"; };
+		AB6054AC20127133008B2EE0 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AB6054AD20127134008B2EE0 /* BluetoothTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BluetoothTests.swift; sourceTree = "<group>"; };
+		ABF133F1201286DD00B40573 /* SensorDriverServerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorDriverServerTests.swift; sourceTree = "<group>"; };
+		ABFFCE962012753A00C522B3 /* BreakThePonyTests-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BreakThePonyTests-Bridging-Header.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		AB3DB78D200533B600232181 /* Frameworks */ = {
+		AB4C50F720126C9000DBF37F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		AB3DB7A0200534EF00232181 /* Frameworks */ = {
+		AB576881200E7C2000A04B20 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -52,60 +68,89 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		AB3DB787200533B600232181 = {
+		AB57687B200E7C2000A04B20 = {
 			isa = PBXGroup;
 			children = (
-				AB3DB792200533B600232181 /* BreakThePony */,
-				AB3DB7A4200534EF00232181 /* BreakThePonyTests */,
-				AB3DB791200533B600232181 /* Products */,
+				AB6054AA20127102008B2EE0 /* BreakThePonyTests */,
+				AB576886200E7C2000A04B20 /* BreakThePony */,
+				AB576885200E7C2000A04B20 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		AB3DB791200533B600232181 /* Products */ = {
+		AB576885200E7C2000A04B20 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				AB3DB790200533B600232181 /* BreakThePony */,
-				AB3DB7A3200534EF00232181 /* BreakThePonyTests.xctest */,
+				AB576884200E7C2000A04B20 /* BreakThePony */,
+				AB4C50FA20126C9000DBF37F /* BreakThePonyTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		AB3DB792200533B600232181 /* BreakThePony */ = {
+		AB576886200E7C2000A04B20 /* BreakThePony */ = {
 			isa = PBXGroup;
 			children = (
-				AB3DB7AB2005351900232181 /* bluetooth */,
-				AB3DB793200533B600232181 /* main.swift */,
+				AB57688F200E7C6200A04B20 /* network */,
+				AB57688E200E7C3A00A04B20 /* bluetooth */,
+				AB576887200E7C2000A04B20 /* main.swift */,
 			);
 			path = BreakThePony;
 			sourceTree = "<group>";
 		};
-		AB3DB7A4200534EF00232181 /* BreakThePonyTests */ = {
+		AB57688E200E7C3A00A04B20 /* bluetooth */ = {
 			isa = PBXGroup;
 			children = (
-				AB3DB7A5200534EF00232181 /* BluetoothTests.swift */,
-				AB3DB7A7200534EF00232181 /* Info.plist */,
-			);
-			path = BreakThePonyTests;
-			sourceTree = "<group>";
-		};
-		AB3DB7AB2005351900232181 /* bluetooth */ = {
-			isa = PBXGroup;
-			children = (
-				AB3DB7AC2005354F00232181 /* CentralBluetoothClient.swift */,
+				AB3D57082010FE8F0075255B /* CentralBluetoothClient.swift */,
 			);
 			path = bluetooth;
+			sourceTree = "<group>";
+		};
+		AB57688F200E7C6200A04B20 /* network */ = {
+			isa = PBXGroup;
+			children = (
+				AB576890200E7C9600A04B20 /* SensorDriverServer.swift */,
+			);
+			path = network;
+			sourceTree = "<group>";
+		};
+		AB6054AA20127102008B2EE0 /* BreakThePonyTests */ = {
+			isa = PBXGroup;
+			children = (
+				ABF133F1201286DD00B40573 /* SensorDriverServerTests.swift */,
+				ABFFCE962012753A00C522B3 /* BreakThePonyTests-Bridging-Header.h */,
+				AB6054AD20127134008B2EE0 /* BluetoothTests.swift */,
+				AB6054AC20127133008B2EE0 /* Info.plist */,
+			);
+			path = BreakThePonyTests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		AB3DB78F200533B600232181 /* BreakThePony */ = {
+		AB4C50F920126C9000DBF37F /* BreakThePonyTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = AB3DB797200533B600232181 /* Build configuration list for PBXNativeTarget "BreakThePony" */;
+			buildConfigurationList = AB4C50FF20126C9000DBF37F /* Build configuration list for PBXNativeTarget "BreakThePonyTests" */;
 			buildPhases = (
-				AB3DB78C200533B600232181 /* Sources */,
-				AB3DB78D200533B600232181 /* Frameworks */,
-				AB3DB78E200533B600232181 /* CopyFiles */,
+				AB4C50F620126C9000DBF37F /* Sources */,
+				AB4C50F720126C9000DBF37F /* Frameworks */,
+				AB4C50F820126C9000DBF37F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				ABFFCE8F2012742400C522B3 /* PBXTargetDependency */,
+			);
+			name = BreakThePonyTests;
+			productName = BreakThePonyTests;
+			productReference = AB4C50FA20126C9000DBF37F /* BreakThePonyTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		AB576883200E7C2000A04B20 /* BreakThePony */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AB57688B200E7C2000A04B20 /* Build configuration list for PBXNativeTarget "BreakThePony" */;
+			buildPhases = (
+				AB576880200E7C2000A04B20 /* Sources */,
+				AB576881200E7C2000A04B20 /* Frameworks */,
+				AB576882200E7C2000A04B20 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -113,66 +158,50 @@
 			);
 			name = BreakThePony;
 			productName = BreakThePony;
-			productReference = AB3DB790200533B600232181 /* BreakThePony */;
+			productReference = AB576884200E7C2000A04B20 /* BreakThePony */;
 			productType = "com.apple.product-type.tool";
-		};
-		AB3DB7A2200534EF00232181 /* BreakThePonyTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = AB3DB7A8200534EF00232181 /* Build configuration list for PBXNativeTarget "BreakThePonyTests" */;
-			buildPhases = (
-				AB3DB79F200534EF00232181 /* Sources */,
-				AB3DB7A0200534EF00232181 /* Frameworks */,
-				AB3DB7A1200534EF00232181 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = BreakThePonyTests;
-			productName = BreakThePonyTests;
-			productReference = AB3DB7A3200534EF00232181 /* BreakThePonyTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		AB3DB788200533B600232181 /* Project object */ = {
+		AB57687C200E7C2000A04B20 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0920;
 				LastUpgradeCheck = 0920;
 				ORGANIZATIONNAME = "Jonathan Bredin";
 				TargetAttributes = {
-					AB3DB78F200533B600232181 = {
+					AB4C50F920126C9000DBF37F = {
 						CreatedOnToolsVersion = 9.2;
+						LastSwiftMigration = 0920;
 						ProvisioningStyle = Automatic;
 					};
-					AB3DB7A2200534EF00232181 = {
+					AB576883200E7C2000A04B20 = {
 						CreatedOnToolsVersion = 9.2;
 						ProvisioningStyle = Automatic;
 					};
 				};
 			};
-			buildConfigurationList = AB3DB78B200533B600232181 /* Build configuration list for PBXProject "BreakThePony" */;
+			buildConfigurationList = AB57687F200E7C2000A04B20 /* Build configuration list for PBXProject "BreakThePony" */;
 			compatibilityVersion = "Xcode 8.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 			);
-			mainGroup = AB3DB787200533B600232181;
-			productRefGroup = AB3DB791200533B600232181 /* Products */;
+			mainGroup = AB57687B200E7C2000A04B20;
+			productRefGroup = AB576885200E7C2000A04B20 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				AB3DB78F200533B600232181 /* BreakThePony */,
-				AB3DB7A2200534EF00232181 /* BreakThePonyTests */,
+				AB576883200E7C2000A04B20 /* BreakThePony */,
+				AB4C50F920126C9000DBF37F /* BreakThePonyTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		AB3DB7A1200534EF00232181 /* Resources */ = {
+		AB4C50F820126C9000DBF37F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -182,28 +211,70 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		AB3DB78C200533B600232181 /* Sources */ = {
+		AB4C50F620126C9000DBF37F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AB3DB794200533B600232181 /* main.swift in Sources */,
-				AB3DB7AD2005354F00232181 /* CentralBluetoothClient.swift in Sources */,
+				ABF133F32012875D00B40573 /* SensorDriverServer.swift in Sources */,
+				ABFFCE902012743100C522B3 /* CentralBluetoothClient.swift in Sources */,
+				ABF133F2201286DD00B40573 /* SensorDriverServerTests.swift in Sources */,
+				ABFFCE8D201273D200C522B3 /* BluetoothTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		AB3DB79F200534EF00232181 /* Sources */ = {
+		AB576880200E7C2000A04B20 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AB3DB7A6200534EF00232181 /* BluetoothTests.swift in Sources */,
-				AB3DB7AE2005354F00232181 /* CentralBluetoothClient.swift in Sources */,
+				AB576891200E7C9600A04B20 /* SensorDriverServer.swift in Sources */,
+				AB3D57092010FE8F0075255B /* CentralBluetoothClient.swift in Sources */,
+				AB576888200E7C2000A04B20 /* main.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		ABFFCE8F2012742400C522B3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AB576883200E7C2000A04B20 /* BreakThePony */;
+			targetProxy = ABFFCE8E2012742400C522B3 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
-		AB3DB795200533B600232181 /* Debug */ = {
+		AB4C510020126C9000DBF37F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = BreakThePonyTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = org.bredin.BreakThePonyTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "BreakThePonyTests/BreakThePonyTests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 4.0;
+			};
+			name = Debug;
+		};
+		AB4C510120126C9000DBF37F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = BreakThePonyTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = org.bredin.BreakThePonyTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "BreakThePonyTests/BreakThePonyTests-Bridging-Header.h";
+				SWIFT_VERSION = 4.0;
+			};
+			name = Release;
+		};
+		AB576889200E7C2000A04B20 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -260,7 +331,7 @@
 			};
 			name = Debug;
 		};
-		AB3DB796200533B600232181 /* Release */ = {
+		AB57688A200E7C2000A04B20 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -309,7 +380,7 @@
 			};
 			name = Release;
 		};
-		AB3DB798200533B600232181 /* Debug */ = {
+		AB57688C200E7C2000A04B20 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -318,36 +389,10 @@
 			};
 			name = Debug;
 		};
-		AB3DB799200533B600232181 /* Release */ = {
+		AB57688D200E7C2000A04B20 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
-			};
-			name = Release;
-		};
-		AB3DB7A9200534EF00232181 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = BreakThePonyTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = org.bredin.BreakThePonyTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
-			};
-			name = Debug;
-		};
-		AB3DB7AA200534EF00232181 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = BreakThePonyTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = org.bredin.BreakThePonyTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 			};
@@ -356,34 +401,34 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		AB3DB78B200533B600232181 /* Build configuration list for PBXProject "BreakThePony" */ = {
+		AB4C50FF20126C9000DBF37F /* Build configuration list for PBXNativeTarget "BreakThePonyTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				AB3DB795200533B600232181 /* Debug */,
-				AB3DB796200533B600232181 /* Release */,
+				AB4C510020126C9000DBF37F /* Debug */,
+				AB4C510120126C9000DBF37F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		AB3DB797200533B600232181 /* Build configuration list for PBXNativeTarget "BreakThePony" */ = {
+		AB57687F200E7C2000A04B20 /* Build configuration list for PBXProject "BreakThePony" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				AB3DB798200533B600232181 /* Debug */,
-				AB3DB799200533B600232181 /* Release */,
+				AB576889200E7C2000A04B20 /* Debug */,
+				AB57688A200E7C2000A04B20 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		AB3DB7A8200534EF00232181 /* Build configuration list for PBXNativeTarget "BreakThePonyTests" */ = {
+		AB57688B200E7C2000A04B20 /* Build configuration list for PBXNativeTarget "BreakThePony" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				AB3DB7A9200534EF00232181 /* Debug */,
-				AB3DB7AA200534EF00232181 /* Release */,
+				AB57688C200E7C2000A04B20 /* Debug */,
+				AB57688D200E7C2000A04B20 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = AB3DB788200533B600232181 /* Project object */;
+	rootObject = AB57687C200E7C2000A04B20 /* Project object */;
 }
