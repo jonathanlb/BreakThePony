@@ -21,6 +21,57 @@ enum SensorDriverError : Error {
 //  Handle network requests to query quadcopter state and to send results.
 //
 class SensorDriverServer {
+  private let dispatch = DispatchQueue(
+    label: "org.bredin.BreakThePony.client_handler",
+    attributes: .concurrent)
+  
+  // Read from the file request and establish conversation with client.
+  // Commands:
+  //   get
+  //   put
+  //   gets
+  //   puts
+  //   alts
+  func handleClientRequest(fd: Int32) {
+    os_log("handleClientRequest %u", fd)
+    let cmd = readToken(fd: fd)
+    os_log("read %@", cmd)
+    sendToken(fd: fd, token: cmd)
+    defer {
+      close(fd)
+    }
+  }
+  
+  // Read file descriptor slowly byte by byte until \r\n.
+  func readToken(fd: Int32) -> String {
+    var result = ""
+    var c: Character
+    let buff = UnsafeMutablePointer<UInt8>.allocate(capacity: 1)
+    
+    func isEnd(c: Character) -> Bool {
+      return c == "\r" || c == "\n"
+    }
+    
+    while read(fd, buff, 1) > 0 {
+      c = Character(UnicodeScalar(buff[0]))
+      if isEnd(c: c) {
+        read(fd, buff, 1)
+        c = Character(UnicodeScalar(buff[0]))
+        if isEnd(c: c) {
+          break
+        } else {
+          result.append("\r\n")
+        }
+      } else {
+        result.append(c)
+      }
+    }
+    
+    defer {
+      buff.deallocate(capacity: 1)
+    }
+    return result
+  }
   
   // Run loop to wait for requests and quickly handle them.
   func run() throws {
@@ -31,25 +82,39 @@ class SensorDriverServer {
     do {
       try serverSocket = ServerConnection()
       while true {
+        // be fragile for now and throw error halting loop
         try clientFd = serverSocket.waitForClient()
-        os_log("connect %u", clientFd)
-        close(clientFd)
+        dispatch.async {
+          self.handleClientRequest(fd: clientFd)
+        }
       }
       defer {
         serverSocket.closeServer()
       }
     } catch SensorDriverError.accept(err) {
-      os_log("cannot accept server socket: %s", strerror(err))
+      os_log("cannot accept server socket: %@", strerror(err))
       throw SensorDriverError.network(err)
     } catch SensorDriverError.bind(err) {
-      os_log("cannot accept bind socket: %s", strerror(err))
+      os_log("cannot accept bind socket: %@", strerror(err))
       throw SensorDriverError.network(err)
     } catch SensorDriverError.listen(err) {
-      os_log("cannot listen: %s", strerror(err))
+      os_log("cannot listen: %@", strerror(err))
       throw SensorDriverError.network(err)
     }
   } // run
   
+  func sendToken(fd: Int32, token: String) {
+    var buff = UnsafePointer<Int8>((token as NSString).utf8String)
+    var numWritten = write(fd, buff, token.count)
+    if numWritten != token.count {
+      os_log("only wrote %d of %d bytes: %@", numWritten, token.count, strerror(errno))
+    }
+    buff = UnsafePointer<Int8>(("\r\n" as NSString).utf8String)
+    numWritten = write(fd, buff, 2)
+    if numWritten != 2 {
+      os_log("only wrote %d of 2 terminating bytes: %@", numWritten, strerror(errno))
+    }
+  }
 }
 
 //
@@ -69,7 +134,7 @@ class ServerConnection {
     sockAddr.sin_family = sa_family_t(AF_INET)
     sockAddr.sin_port = port.bigEndian
     
-    if bind(socketFd, safeSockAddr(sa_in: sockAddr), SOCK_LEN) != 0 {
+    if bind(socketFd, ServerConnection.safeSockAddr(sa_in: sockAddr), SOCK_LEN) != 0 {
       throw SensorDriverError.bind(errno)
     }
     
@@ -86,7 +151,7 @@ class ServerConnection {
   
   // Transform sockaddr_in to sockaddr* with a cast.
   // Returning pointer to variable on stack doesn't seem like it should work...
-  func safeSockAddr(sa_in: sockaddr_in) -> UnsafeMutablePointer<sockaddr> {
+  static func safeSockAddr(sa_in: sockaddr_in) -> UnsafeMutablePointer<sockaddr> {
     var sockAddr = sa_in
     return withUnsafeMutablePointer(to: &sockAddr) {
       $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
@@ -100,7 +165,7 @@ class ServerConnection {
   func waitForClient() throws -> Int32 {
     os_log("accepting on port=%u", sockAddr.sin_port.bigEndian)
     var vSockLen = SOCK_LEN
-    let toClientFd = accept(socketFd, safeSockAddr(sa_in: sockAddr), &vSockLen)
+    let toClientFd = accept(socketFd, ServerConnection.safeSockAddr(sa_in: sockAddr), &vSockLen)
     if (toClientFd < 0) {
       throw SensorDriverError.accept(errno)
     }

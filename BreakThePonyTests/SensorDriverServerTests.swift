@@ -13,19 +13,27 @@ class SensorDriverServerTests: XCTestCase {
   
   override func setUp() {
     super.setUp()
-    // Put setup code here. This method is called before the invocation of each test method in the class.
   }
   
   override func tearDown() {
-    // Put teardown code here. This method is called after the invocation of each test method in the class.
     super.tearDown()
+  }
+  
+  func testCastSockAddr() {
+    var sockAddr = sockaddr_in()
+    let port: in_port_t = 1111
+    sockAddr.sin_port = port
+    let _ = ServerConnection.safeSockAddr(sa_in: sockAddr)
+    // extract port from casted?
   }
   
   func testInstantiateConnection() throws {
     let err: Int32 = 0
     do {
       let conn = try ServerConnection()
-      conn.closeServer()
+      defer {
+        conn.closeServer()
+      }
     } catch SensorDriverError.accept(err) {
       os_log("cannot accept server socket: %s", strerror(err))
       throw SensorDriverError.network(err)
@@ -40,6 +48,16 @@ class SensorDriverServerTests: XCTestCase {
   
   func testInstantiateServer() {
     let _ = SensorDriverServer()
+  }
+  
+  func testReadToken() {
+    let s = SensorDriverServer()
+    let fds = UnsafeMutablePointer<Int32>.allocate(capacity: 2)
+    pipe(fds) // XXX improper use of pipe -- nothing sent?
+    let tokenSent = "Hello"
+    s.sendToken(fd: fds[1], token: tokenSent + "\r\n")
+    let tokenRead = s.readToken(fd: fds[0])
+    XCTAssertEqual(tokenSent, tokenRead)
   }
   
   func testPerformanceExample() {
