@@ -11,6 +11,13 @@ import os.log
 
 class SensorDriverServerTests: XCTestCase {
   
+  func makePipe() -> UnsafeMutablePointer<Int32> {
+    let fds = UnsafeMutablePointer<Int32>.allocate(capacity: 2)
+    socketpair(AF_UNIX, SOCK_STREAM, 0, fds)
+    // pipe(fds)
+    return fds
+  }
+  
   override func setUp() {
     super.setUp()
   }
@@ -25,6 +32,47 @@ class SensorDriverServerTests: XCTestCase {
     sockAddr.sin_port = port
     let _ = ServerConnection.safeSockAddr(sa_in: sockAddr)
     // extract port from casted?
+  }
+  
+  func testAlternateCommand() {
+    let state = SimpleCopterStateServer()
+    let s = SensorDriverServer(copterState: state)
+    let fds = makePipe()
+    let dispatch = DispatchQueue(
+      label: "org.bredin.BreakThePony.alternate_command_test",
+      attributes: .concurrent)
+    defer {
+      free(fds)
+    }
+    
+    state.updateSensors([1.0, 2.0])
+    let cmd = CommCommand(rawValue: "alt")
+    SensorDriverServer.sendToken(fd: fds[1], token: cmd!.rawValue)
+    SensorDriverServer.sendToken(fd: fds[1], token: "3.0, 4.0")
+    // XXX terminate?
+
+    dispatch.async {
+      s.handleClientRequest(fd: fds[0])
+    }
+    
+    let response = SensorDriverServer.readToken(fd: fds[1])
+    XCTAssertEqual("1.0, 2.0", response) // XXX flakey
+  }
+  
+  func testGetCommand() {
+    let state = SimpleCopterStateServer()
+    let s = SensorDriverServer(copterState: state)
+    let fds = makePipe()
+    defer {
+      free(fds)
+    }
+    
+    state.updateSensors([1.0, 2.0])
+    let cmd = CommCommand(rawValue: "get")
+    SensorDriverServer.sendToken(fd: fds[1], token: cmd!.rawValue)
+    s.handleClientRequest(fd: fds[0])
+    let response = SensorDriverServer.readToken(fd: fds[1])
+    XCTAssertEqual("1.0, 2.0", response)
   }
   
   func testInstantiateConnection() throws {
@@ -47,16 +95,35 @@ class SensorDriverServerTests: XCTestCase {
   }
   
   func testInstantiateServer() {
-    let _ = SensorDriverServer()
+    let state = SimpleCopterStateServer()
+    let _ = SensorDriverServer(copterState: state)
+  }
+  
+  func testPutCommand() {
+    let state = SimpleCopterStateServer()
+    let s = SensorDriverServer(copterState: state)
+    let fds = makePipe()
+    defer {
+      free(fds)
+    }
+    
+    let cmd = CommCommand(rawValue: "put")
+    SensorDriverServer.sendToken(fd: fds[1], token: cmd!.rawValue)
+    SensorDriverServer.sendToken(fd: fds[1], token: "1.0, 2.0") // XXX bidirectional danger?
+    s.handleClientRequest(fd: fds[0])
+    
+    let newState = state.readSensors()
+    XCTAssertEqual([1.0, 2.0], newState)
   }
   
   func testReadToken() {
-    let s = SensorDriverServer()
-    let fds = UnsafeMutablePointer<Int32>.allocate(capacity: 2)
-    pipe(fds) // XXX improper use of pipe -- nothing sent?
+    let fds = makePipe()
+    defer {
+      free(fds)
+    }
     let tokenSent = "Hello"
-    s.sendToken(fd: fds[1], token: tokenSent + "\r\n")
-    let tokenRead = s.readToken(fd: fds[0])
+    SensorDriverServer.sendToken(fd: fds[1], token: tokenSent + "\r\n")
+    let tokenRead = SensorDriverServer.readToken(fd: fds[0])
     XCTAssertEqual(tokenSent, tokenRead)
   }
   

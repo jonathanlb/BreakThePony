@@ -13,6 +13,7 @@ class CentralBluetoothClient : NSObject {
   let notifyCharId = CBUUID(string: "0000ffe1-0000-1000-8000-00805f9b34fb")
   let serviceId =    CBUUID(string: "0000ffe0-0000-1000-8000-00805f9b34fb")
   
+  private let copterState: CopterStateServer
   private var centralManager: CBCentralManager!
   private var quadcopterPeripheral: CBPeripheral!
   private var serviceIds: [CBUUID] = []
@@ -21,8 +22,8 @@ class CentralBluetoothClient : NSObject {
   let bluetoothScanOptions = [
     CBCentralManagerScanOptionAllowDuplicatesKey: false]
 
-  override init() {
-    // serviceIds = [serviceId, notifyCharId]
+  init(copterState: CopterStateServer) {
+    self.copterState = copterState
   }
   
   func connect(peripheral: CBPeripheral) {

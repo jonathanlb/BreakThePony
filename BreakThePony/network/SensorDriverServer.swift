@@ -6,8 +6,8 @@
 //  Copyright © 2018 Jonathan Bredin. All rights reserved.
 //
 
-import Foundation
 import CoreFoundation
+import Foundation
 import os.log
 
 enum SensorDriverError : Error {
@@ -18,32 +18,66 @@ enum SensorDriverError : Error {
 }
 
 //
+// Commands to send to the server
+//
+enum CommCommand: String {
+  case get = "get"
+  case put = "put"
+  case alternate = "alt"
+  case stream = "str"
+}
+
+protocol CommandExecutor {
+  var ioF: Int32 { get }
+  func run()
+}
+
+func errStr(_ errno: Int32) -> String {
+  return String(cString: strerror(errno))
+}
+
+//
 //  Handle network requests to query quadcopter state and to send results.
 //
 class SensorDriverServer {
+  private let copterState: CopterStateServer
   private let dispatch = DispatchQueue(
     label: "org.bredin.BreakThePony.client_handler",
     attributes: .concurrent)
   
-  // Read from the file request and establish conversation with client.
-  // Commands:
-  //   get
-  //   put
-  //   gets
-  //   puts
-  //   alts
+  init(copterState: CopterStateServer) {
+    self.copterState = copterState
+  }
+  
   func handleClientRequest(fd: Int32) {
-    os_log("handleClientRequest %u", fd)
-    let cmd = readToken(fd: fd)
-    os_log("read %@", cmd)
-    sendToken(fd: fd, token: cmd)
     defer {
       close(fd)
     }
+    os_log("handleClientRequest %u", fd)
+    let rawCmd = SensorDriverServer.readToken(fd: fd)
+    guard let cmd = CommCommand(rawValue: rawCmd.lowercased()) else {
+      os_log("invalid command: %@", rawCmd)
+      return
+    }
+    os_log("read %@", rawCmd)
+    
+    let exe: CommandExecutor?
+    switch cmd {
+    case CommCommand.alternate:
+      exe = AlternateCommand(copterState: copterState, f: fd)
+    case CommCommand.get:
+      exe = GetCommand(copterState: copterState, f: fd)
+    case CommCommand.put:
+      exe = PutCommand(copterState: copterState, f: fd)
+    case CommCommand.stream:
+      // TODO: implement streaming get
+      exe = GetCommand(copterState: copterState, f: fd)
+    }
+    exe?.run()
   }
   
   // Read file descriptor slowly byte by byte until \r\n.
-  func readToken(fd: Int32) -> String {
+  static func readToken(fd: Int32) -> String {
     var result = ""
     var c: Character
     let buff = UnsafeMutablePointer<UInt8>.allocate(capacity: 1)
@@ -81,38 +115,38 @@ class SensorDriverServer {
     
     do {
       try serverSocket = ServerConnection()
+      defer {
+        serverSocket.closeServer()
+      }
       while true {
-        // be fragile for now and throw error halting loop
         try clientFd = serverSocket.waitForClient()
         dispatch.async {
           self.handleClientRequest(fd: clientFd)
         }
       }
-      defer {
-        serverSocket.closeServer()
-      }
     } catch SensorDriverError.accept(err) {
-      os_log("cannot accept server socket: %@", strerror(err))
+      os_log("cannot accept server socket: %@", errStr(err))
       throw SensorDriverError.network(err)
     } catch SensorDriverError.bind(err) {
-      os_log("cannot accept bind socket: %@", strerror(err))
+      os_log("cannot accept bind socket: %@", errStr(err))
       throw SensorDriverError.network(err)
     } catch SensorDriverError.listen(err) {
-      os_log("cannot listen: %@", strerror(err))
+      os_log("cannot listen: %@", errStr(err))
       throw SensorDriverError.network(err)
     }
   } // run
   
-  func sendToken(fd: Int32, token: String) {
+  static func sendToken(fd: Int32, token: String) {
     var buff = UnsafePointer<Int8>((token as NSString).utf8String)
     var numWritten = write(fd, buff, token.count)
     if numWritten != token.count {
-      os_log("only wrote %d of %d bytes: %@", numWritten, token.count, strerror(errno))
+      os_log("only wrote %d of %d bytes: %@", numWritten, token.count, errStr(errno))
     }
+    
     buff = UnsafePointer<Int8>(("\r\n" as NSString).utf8String)
     numWritten = write(fd, buff, 2)
     if numWritten != 2 {
-      os_log("only wrote %d of 2 terminating bytes: %@", numWritten, strerror(errno))
+      os_log("only wrote %d of 2 terminating bytes: %@", numWritten, errStr(errno))
     }
   }
 }

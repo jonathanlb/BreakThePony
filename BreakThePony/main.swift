@@ -8,10 +8,11 @@
 
 import Foundation
 
-let btControl = CentralBluetoothClient()
+let copterState = SimpleCopterStateServer()
+let btControl = CentralBluetoothClient(copterState: copterState)
 btControl.start()
 
-let sensors = SensorDriverServer()
+let sensors = SensorDriverServer(copterState: copterState)
 do {
   try sensors.run()
   print("connected")

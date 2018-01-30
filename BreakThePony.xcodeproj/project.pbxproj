@@ -10,6 +10,14 @@
 		AB3D57092010FE8F0075255B /* CentralBluetoothClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB3D57082010FE8F0075255B /* CentralBluetoothClient.swift */; };
 		AB576888200E7C2000A04B20 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB576887200E7C2000A04B20 /* main.swift */; };
 		AB576891200E7C9600A04B20 /* SensorDriverServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB576890200E7C9600A04B20 /* SensorDriverServer.swift */; };
+		ABDE2E5A201EC4A700CB0FFB /* GetCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABDE2E59201EC4A700CB0FFB /* GetCommand.swift */; };
+		ABDE2E5B201EC74C00CB0FFB /* GetCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABDE2E59201EC4A700CB0FFB /* GetCommand.swift */; };
+		ABDE2E5D20202F0F00CB0FFB /* CopterStateServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABDE2E5C20202F0F00CB0FFB /* CopterStateServer.swift */; };
+		ABDE2E5E202036EF00CB0FFB /* CopterStateServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABDE2E5C20202F0F00CB0FFB /* CopterStateServer.swift */; };
+		ABDE2E6020203BEA00CB0FFB /* PutCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABDE2E5F20203BEA00CB0FFB /* PutCommand.swift */; };
+		ABDE2E6120203BEA00CB0FFB /* PutCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABDE2E5F20203BEA00CB0FFB /* PutCommand.swift */; };
+		ABDE2E632020536B00CB0FFB /* AlternateCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABDE2E622020536B00CB0FFB /* AlternateCommand.swift */; };
+		ABDE2E642020536B00CB0FFB /* AlternateCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABDE2E622020536B00CB0FFB /* AlternateCommand.swift */; };
 		ABF133F2201286DD00B40573 /* SensorDriverServerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABF133F1201286DD00B40573 /* SensorDriverServerTests.swift */; };
 		ABF133F32012875D00B40573 /* SensorDriverServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB576890200E7C9600A04B20 /* SensorDriverServer.swift */; };
 		ABFFCE8D201273D200C522B3 /* BluetoothTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB6054AD20127134008B2EE0 /* BluetoothTests.swift */; };
@@ -46,6 +54,10 @@
 		AB576890200E7C9600A04B20 /* SensorDriverServer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SensorDriverServer.swift; sourceTree = "<group>"; };
 		AB6054AC20127133008B2EE0 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AB6054AD20127134008B2EE0 /* BluetoothTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BluetoothTests.swift; sourceTree = "<group>"; };
+		ABDE2E59201EC4A700CB0FFB /* GetCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetCommand.swift; sourceTree = "<group>"; };
+		ABDE2E5C20202F0F00CB0FFB /* CopterStateServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CopterStateServer.swift; sourceTree = "<group>"; };
+		ABDE2E5F20203BEA00CB0FFB /* PutCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PutCommand.swift; sourceTree = "<group>"; };
+		ABDE2E622020536B00CB0FFB /* AlternateCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlternateCommand.swift; sourceTree = "<group>"; };
 		ABF133F1201286DD00B40573 /* SensorDriverServerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorDriverServerTests.swift; sourceTree = "<group>"; };
 		ABFFCE962012753A00C522B3 /* BreakThePonyTests-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BreakThePonyTests-Bridging-Header.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -92,6 +104,7 @@
 				AB57688F200E7C6200A04B20 /* network */,
 				AB57688E200E7C3A00A04B20 /* bluetooth */,
 				AB576887200E7C2000A04B20 /* main.swift */,
+				ABDE2E5C20202F0F00CB0FFB /* CopterStateServer.swift */,
 			);
 			path = BreakThePony;
 			sourceTree = "<group>";
@@ -108,6 +121,9 @@
 			isa = PBXGroup;
 			children = (
 				AB576890200E7C9600A04B20 /* SensorDriverServer.swift */,
+				ABDE2E59201EC4A700CB0FFB /* GetCommand.swift */,
+				ABDE2E5F20203BEA00CB0FFB /* PutCommand.swift */,
+				ABDE2E622020536B00CB0FFB /* AlternateCommand.swift */,
 			);
 			path = network;
 			sourceTree = "<group>";
@@ -216,8 +232,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				ABF133F32012875D00B40573 /* SensorDriverServer.swift in Sources */,
+				ABDE2E642020536B00CB0FFB /* AlternateCommand.swift in Sources */,
 				ABFFCE902012743100C522B3 /* CentralBluetoothClient.swift in Sources */,
+				ABDE2E6120203BEA00CB0FFB /* PutCommand.swift in Sources */,
 				ABF133F2201286DD00B40573 /* SensorDriverServerTests.swift in Sources */,
+				ABDE2E5E202036EF00CB0FFB /* CopterStateServer.swift in Sources */,
+				ABDE2E5B201EC74C00CB0FFB /* GetCommand.swift in Sources */,
 				ABFFCE8D201273D200C522B3 /* BluetoothTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -228,7 +248,11 @@
 			files = (
 				AB576891200E7C9600A04B20 /* SensorDriverServer.swift in Sources */,
 				AB3D57092010FE8F0075255B /* CentralBluetoothClient.swift in Sources */,
+				ABDE2E5A201EC4A700CB0FFB /* GetCommand.swift in Sources */,
+				ABDE2E632020536B00CB0FFB /* AlternateCommand.swift in Sources */,
+				ABDE2E6020203BEA00CB0FFB /* PutCommand.swift in Sources */,
 				AB576888200E7C2000A04B20 /* main.swift in Sources */,
+				ABDE2E5D20202F0F00CB0FFB /* CopterStateServer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

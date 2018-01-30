@@ -20,7 +20,8 @@ class BluetoothTests: XCTestCase {
   }
   
   func testClientStartStop() {
-    let client = CentralBluetoothClient()
+    let copterState = SimpleCopterStateServer()
+    let client = CentralBluetoothClient(copterState: copterState)
     XCTAssert(!client.isScanning(), "start-up shouldn't activate bluetooth")
     client.start()
     client.stop()
