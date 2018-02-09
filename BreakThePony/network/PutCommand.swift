@@ -2,6 +2,8 @@
 //  PutCommand.swift
 //  BreakThePony
 //
+//  Expect a string in the form <value0>, <value1>, ...
+//
 //  Created by Jonathan Bredin on 1/29/18.
 //  Copyright © 2018 Jonathan Bredin. All rights reserved.
 //
@@ -22,6 +24,6 @@ class PutCommand : CommandExecutor {
     let newState = putCommand.split(separator: ",").map{
       Double($0.trimmingCharacters(in: [" "]))!
     }
-    copterState.updateSensors(newState)
+    copterState.updateActuators(newState)
   }
 }

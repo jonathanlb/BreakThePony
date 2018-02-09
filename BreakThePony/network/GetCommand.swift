@@ -6,6 +6,7 @@
 //  Copyright © 2018 Jonathan Bredin. All rights reserved.
 //
 
+import CoreBluetooth
 import Foundation
 
 class GetCommand : CommandExecutor {
@@ -17,9 +18,23 @@ class GetCommand : CommandExecutor {
     ioF = f
   }
   
+  static func marshallSensorReading(sensor: CBUUID, value: Double) -> String {
+      return sensor.description + ", " + value.description
+  }
+  
+  static func marshallState(_ state: [CBUUID: Double]) -> String {
+    let stateStr = state.description
+    return String(stateStr.dropFirst().dropLast())
+  }
+  
+  static func marshallState(_ state: [Double]) -> String {
+    let stateStr = state.description
+    return String(stateStr.dropFirst().dropLast())
+  }
+  
   func run() {
-    var stateStr = copterState.readSensors().description
-    stateStr = String(stateStr.dropFirst().dropLast())
-    SensorDriverServer.sendToken(fd: ioF, token: stateStr)
+    let readings = copterState.readSensors()
+    SensorDriverServer.sendToken(fd: ioF,
+                                 token: GetCommand.marshallState(readings))
   }
 }

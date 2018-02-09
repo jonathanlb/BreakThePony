@@ -6,6 +6,7 @@
 //  Copyright © 2018 Jonathan Bredin. All rights reserved.
 //
 
+import CoreBluetooth
 import XCTest
 import os.log
 
@@ -34,7 +35,7 @@ class SensorDriverServerTests: XCTestCase {
     // extract port from casted?
   }
   
-  func testAlternateCommand() {
+  func testAlternateCommand() { // XXX
     let state = SimpleCopterStateServer()
     let s = SensorDriverServer(copterState: state)
     let fds = makePipe()
@@ -45,18 +46,18 @@ class SensorDriverServerTests: XCTestCase {
       free(fds)
     }
     
-    state.updateSensors([1.0, 2.0])
+    let id0 = CBUUID()
+    state.updateSensor(sensor: id0, value: 1.0)
     let cmd = CommCommand(rawValue: "alt")
     SensorDriverServer.sendToken(fd: fds[1], token: cmd!.rawValue)
-    SensorDriverServer.sendToken(fd: fds[1], token: "3.0, 4.0")
-    // XXX terminate?
+    SensorDriverServer.sendToken(fd: fds[1], token: "1.0, -1.0")
 
     dispatch.async {
       s.handleClientRequest(fd: fds[0])
     }
     
     let response = SensorDriverServer.readToken(fd: fds[1])
-    XCTAssertEqual("1.0, 2.0", response) // XXX flakey
+    XCTAssertEqual(id0.description + ": 1.0", response) // XXX flakey
   }
   
   func testGetCommand() {
@@ -67,12 +68,13 @@ class SensorDriverServerTests: XCTestCase {
       free(fds)
     }
     
-    state.updateSensors([1.0, 2.0])
+    let id0 = CBUUID()
+    state.updateSensor(sensor: id0, value: 2.0)
     let cmd = CommCommand(rawValue: "get")
     SensorDriverServer.sendToken(fd: fds[1], token: cmd!.rawValue)
     s.handleClientRequest(fd: fds[0])
     let response = SensorDriverServer.readToken(fd: fds[1])
-    XCTAssertEqual("1.0, 2.0", response)
+    XCTAssertEqual(id0.description + ": 2.0", response)
   }
   
   func testInstantiateConnection() throws {
@@ -100,7 +102,13 @@ class SensorDriverServerTests: XCTestCase {
   }
   
   func testPutCommand() {
-    let state = SimpleCopterStateServer()
+    class LocalCopterState : SimpleCopterStateServer {
+      var actuators = [0.0, 0.0, 0.0]
+      override func updateActuators(_ power: [Double]) {
+        actuators = power
+      }
+    }
+    let state = LocalCopterState()
     let s = SensorDriverServer(copterState: state)
     let fds = makePipe()
     defer {
@@ -109,11 +117,9 @@ class SensorDriverServerTests: XCTestCase {
     
     let cmd = CommCommand(rawValue: "put")
     SensorDriverServer.sendToken(fd: fds[1], token: cmd!.rawValue)
-    SensorDriverServer.sendToken(fd: fds[1], token: "1.0, 2.0") // XXX bidirectional danger?
+    SensorDriverServer.sendToken(fd: fds[1], token: "1.0, 2.0, -3.0")
     s.handleClientRequest(fd: fds[0])
-    
-    let newState = state.readSensors()
-    XCTAssertEqual([1.0, 2.0], newState)
+    XCTAssertEqual([1.0, 2.0, -3.0], state.actuators)
   }
   
   func testReadToken() {

@@ -70,8 +70,7 @@ class SensorDriverServer {
     case CommCommand.put:
       exe = PutCommand(copterState: copterState, f: fd)
     case CommCommand.stream:
-      // TODO: implement streaming get
-      exe = GetCommand(copterState: copterState, f: fd)
+      exe = StreamCommand(copterState: copterState, f: fd)
     }
     exe?.run()
   }

@@ -40,6 +40,15 @@ class CentralBluetoothClient : NSObject {
     }
   }
   
+  static func evalData(_ data: Data?) -> Double {
+    if let x = data {
+      NSLog("eval count %d", x.count) // 1 byte, followed by 4
+      return 1.0
+    } else {
+      return 0.0
+    }
+  }
+  
   func isQuadcopter(peripheral: CBPeripheral) -> Bool {
     return peripheral.name!.starts(with: "Crazepony")
   }
@@ -154,7 +163,7 @@ extension CentralBluetoothClient : CBPeripheralDelegate {
                   error: Error?)
   {
     for characteristic in service.characteristics! {
-      NSLog("characteristic %@ : %@", characteristic, characteristic.value?.description ?? "???")
+      NSLog("discovered characteristic %@ : %@", characteristic, characteristic.value?.description ?? "???")
       characteristics.insert(characteristic)
       peripheral.readValue(for: characteristic)
     }
@@ -177,7 +186,10 @@ extension CentralBluetoothClient : CBPeripheralDelegate {
   }
   
   func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
-    NSLog("update %@ : %@", characteristic, characteristic.value?.description ?? "???")
+    NSLog("characteristic update %@ : %@", characteristic, characteristic.value?.description ?? "???")
+    copterState.updateSensor(sensor: characteristic.uuid,
+                             value: CentralBluetoothClient.evalData(characteristic.value))
+    peripheral.readValue(for: characteristic)
   }
   
   func peripheral(_ peripheral: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?) {
