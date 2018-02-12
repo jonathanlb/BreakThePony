@@ -24,6 +24,7 @@ Upon receiving "put" the server will wait for a string of the form "power-value-
 "alt" spins off a thread to alternate sending quadcopter state strings of the form sent by get and waiting for a power assignment string used in the put command. Clean termination is not currently implemented.
 
 ## Todos
+- Decode sensor readings...
 - Clean termination of str and alt commands.
-- Graphical monitoring, for separate project.
+- Graphical monitoring, for separate project.... dump to postgres and read with Grafana?
 - Simple navigation/hold attitude command, for a separate project.

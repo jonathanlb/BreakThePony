@@ -12,10 +12,9 @@ import os.log
 
 class SensorDriverServerTests: XCTestCase {
   
-  func makePipe() -> UnsafeMutablePointer<Int32> {
+  private func makeSocket() -> UnsafeMutablePointer<Int32> {
     let fds = UnsafeMutablePointer<Int32>.allocate(capacity: 2)
     socketpair(AF_UNIX, SOCK_STREAM, 0, fds)
-    // pipe(fds)
     return fds
   }
   
@@ -35,10 +34,10 @@ class SensorDriverServerTests: XCTestCase {
     // extract port from casted?
   }
   
-  func testAlternateCommand() { // XXX
+  func testAlternateCommand() { // XXX doesn't check power values sent
     let state = SimpleCopterStateServer()
     let s = SensorDriverServer(copterState: state)
-    let fds = makePipe()
+    let fds = makeSocket()
     let dispatch = DispatchQueue(
       label: "org.bredin.BreakThePony.alternate_command_test",
       attributes: .concurrent)
@@ -57,16 +56,13 @@ class SensorDriverServerTests: XCTestCase {
     }
     
     let response = SensorDriverServer.readToken(fd: fds[1])
-    XCTAssertEqual(id0.description + ": 1.0", response) // XXX flakey
+    XCTAssertEqual(id0.description + ": 1.0", response)
   }
   
   func testGetCommand() {
     let state = SimpleCopterStateServer()
     let s = SensorDriverServer(copterState: state)
-    let fds = makePipe()
-    defer {
-      free(fds)
-    }
+    let fds = makeSocket()
     
     let id0 = CBUUID()
     state.updateSensor(sensor: id0, value: 2.0)
@@ -110,7 +106,7 @@ class SensorDriverServerTests: XCTestCase {
     }
     let state = LocalCopterState()
     let s = SensorDriverServer(copterState: state)
-    let fds = makePipe()
+    let fds = makeSocket()
     defer {
       free(fds)
     }
@@ -123,7 +119,7 @@ class SensorDriverServerTests: XCTestCase {
   }
   
   func testReadToken() {
-    let fds = makePipe()
+    let fds = makeSocket()
     defer {
       free(fds)
     }
@@ -133,11 +129,36 @@ class SensorDriverServerTests: XCTestCase {
     XCTAssertEqual(tokenSent, tokenRead)
   }
   
-  func testPerformanceExample() {
-    // This is an example of a performance test case.
-    self.measure {
-      // Put the code you want to measure the time of here.
+  func testStreamCommand() {
+    let dispatch = DispatchQueue(
+      label: "org.bredin.BreakThePony.stream_command_test",
+      attributes: .concurrent)
+    let state = SimpleCopterStateServer()
+    let s = SensorDriverServer(copterState: state)
+    let fds = makeSocket()
+    // don't defer/free with multithreading, hope OS cleans up....
+    
+    let id0 = CBUUID()
+    
+    state.updateSensor(sensor: id0, value: 1.0)
+    let cmd = CommCommand(rawValue: "str")
+    SensorDriverServer.sendToken(fd: fds[1], token: cmd!.rawValue)
+    
+    dispatch.async {
+      s.handleClientRequest(fd: fds[0])
+      state.updateSensor(sensor: id0, value: 2.0)
+      state.updateSensor(sensor: id0, value: 3.0)
     }
+    
+    var response = SensorDriverServer.readToken(fd: fds[1])
+    XCTAssertEqual(id0.description + ": 2.0", response)
+    
+    response = SensorDriverServer.readToken(fd: fds[1])
+    XCTAssertEqual(id0.description + ": 3.0", response)
+    
+    // Different ordering?
+    state.updateSensor(sensor: id0, value: 4.0)
+    response = SensorDriverServer.readToken(fd: fds[1])
+    XCTAssertEqual(id0.description + ": 4.0", response)
   }
-  
 }

@@ -8,8 +8,10 @@
 
 import CoreBluetooth
 import Foundation
+import os.log
 
 class StreamCommand : CommandExecutor {
+  static private var runId = 0
   private let copterState: CopterStateServer
   let ioF: Int32
   
@@ -19,10 +21,23 @@ class StreamCommand : CommandExecutor {
   }
   
   func run() {
-    copterState.subscribeSensors({
-      (sensor: CBUUID, value: Double) -> Void in
-      SensorDriverServer.sendToken(fd: self.ioF, token: GetCommand.marshallSensorReading(sensor: sensor, value: value))
-    })
-    // terminates, early.  Make command terminate connection
+    var thisTag: String
+    objc_sync_enter(StreamCommand.runId)
+    thisTag = "stream-" + StreamCommand.runId.description
+    StreamCommand.runId += 1
+    objc_sync_exit(StreamCommand.runId)
+    
+    func f (sensor: CBUUID, value: Double) -> Void {
+      do {
+        SensorDriverServer.sendToken(fd: self.ioF, token: GetCommand.marshallSensorReading(sensor: sensor, value: value))
+      } catch {
+        // XXX how to catch/handle more than execeptions....
+        copterState.unsubscribeSensors(tag: thisTag)
+        os_log("terminating stream: %@", error.localizedDescription)
+        close(self.ioF)
+      }
+    }
+
+    copterState.subscribeSensors(tag: thisTag, callback: f)
   }
 }

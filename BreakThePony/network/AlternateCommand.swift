@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import os.log
 
 class AlternateCommand : CommandExecutor {
   private let copterState: CopterStateServer
@@ -18,11 +19,15 @@ class AlternateCommand : CommandExecutor {
   }
   
   func run() {
+    defer {
+      os_log("terminating alternate on %d", ioF)
+      close(ioF)
+    }
     let get = GetCommand(copterState: copterState, f: ioF)
     let put = PutCommand(copterState: copterState, f: ioF)
     while true {
       get.run()
-      put.run() // XXX allow termination
+      put.run()
     }
   }
 }

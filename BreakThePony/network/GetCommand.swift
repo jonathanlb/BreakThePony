@@ -2,6 +2,12 @@
 //  GetCommand.swift
 //  BreakThePony
 //
+//  State retrieval from Protocol::processDataIn()
+//  https://github.com/Crazepony/crazepony-android-client-none/blob/master/app/src/main/java/com/test/Crazepony/Protocol.java
+//
+//  Header is "$m>" byte_data_size
+//  Error/termination is "!"
+//
 //  Created by Jonathan Bredin on 1/28/18.
 //  Copyright © 2018 Jonathan Bredin. All rights reserved.
 //
@@ -19,7 +25,7 @@ class GetCommand : CommandExecutor {
   }
   
   static func marshallSensorReading(sensor: CBUUID, value: Double) -> String {
-      return sensor.description + ", " + value.description
+    return sensor.description + ": " + value.description
   }
   
   static func marshallState(_ state: [CBUUID: Double]) -> String {
@@ -36,5 +42,6 @@ class GetCommand : CommandExecutor {
     let readings = copterState.readSensors()
     SensorDriverServer.sendToken(fd: ioF,
                                  token: GetCommand.marshallState(readings))
+    close(ioF)
   }
 }

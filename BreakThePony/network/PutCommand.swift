@@ -21,6 +21,7 @@ class PutCommand : CommandExecutor {
   
   func run() {
     let putCommand = SensorDriverServer.readToken(fd: ioF)
+    close(ioF)
     let newState = putCommand.split(separator: ",").map{
       Double($0.trimmingCharacters(in: [" "]))!
     }

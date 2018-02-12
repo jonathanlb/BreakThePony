@@ -50,13 +50,12 @@ class SensorDriverServer {
   }
   
   func handleClientRequest(fd: Int32) {
-    defer {
-      close(fd)
-    }
     os_log("handleClientRequest %u", fd)
+    // XXX catch error, limit wait?
     let rawCmd = SensorDriverServer.readToken(fd: fd)
     guard let cmd = CommCommand(rawValue: rawCmd.lowercased()) else {
       os_log("invalid command: %@", rawCmd)
+      close(fd)
       return
     }
     os_log("read %@", rawCmd)
