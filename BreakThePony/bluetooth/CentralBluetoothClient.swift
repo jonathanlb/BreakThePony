@@ -7,13 +7,22 @@
 //
 
 import CoreBluetooth
+import os.log
 
 class CentralBluetoothClient : NSObject {
   // Crazepony characteristics and services from github.... not useful?
   let notifyCharId = CBUUID(string: "0000ffe1-0000-1000-8000-00805f9b34fb")
   let serviceId =    CBUUID(string: "0000ffe0-0000-1000-8000-00805f9b34fb")
   
-  private let copterState: CopterStateServer
+  // Sensor labels
+  static let ROLL = "rol"
+  static let PITCH = "pit"
+  static let YAW = "yaw"
+  static let ALTITUDE = "alt"
+  static let VOLTS = "vol"
+  static let SPEEDZ = "spz"
+  
+  private let commandAccum: CommandAccumulator
   private var centralManager: CBCentralManager!
   private var quadcopterPeripheral: CBPeripheral!
   private var serviceIds: [CBUUID] = []
@@ -23,7 +32,7 @@ class CentralBluetoothClient : NSObject {
     CBCentralManagerScanOptionAllowDuplicatesKey: false]
 
   init(copterState: CopterStateServer) {
-    self.copterState = copterState
+    self.commandAccum = CommandAccumulator(copterState: copterState)
   }
   
   func connect(peripheral: CBPeripheral) {
@@ -40,17 +49,12 @@ class CentralBluetoothClient : NSObject {
     }
   }
   
-  static func evalData(_ data: Data?) -> Double {
-    if let x = data {
-      NSLog("eval count %d", x.count) // 1 byte, followed by 4
-      return 1.0
-    } else {
-      return 0.0
-    }
-  }
-  
   func isQuadcopter(peripheral: CBPeripheral) -> Bool {
-    return peripheral.name!.starts(with: "Crazepony")
+    if let name = peripheral.name {
+      return name.starts(with: "Crazepony")
+    } else {
+      return false
+    }
   }
   
   func isScanning() -> Bool {
@@ -177,19 +181,34 @@ extension CentralBluetoothClient : CBPeripheralDelegate {
     NSLog("discovered descriptors")
   }
   
+  /*
   func peripheralDidUpdateName(_ peripheral: CBPeripheral) {
     NSLog("update name")
   }
+  */
   
   func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor descriptor: CBDescriptor, error: Error?) {
     NSLog("updateValue desc")
   }
   
   func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
-    NSLog("characteristic update %@ : %@", characteristic, characteristic.value?.description ?? "???")
-    copterState.updateSensor(sensor: characteristic.uuid,
-                             value: CentralBluetoothClient.evalData(characteristic.value))
-    peripheral.readValue(for: characteristic)
+    if error != nil {
+      // Reading is not permitted... chatty
+      /*
+      os_log("error from %@/%@: %@",
+             peripheral.name ?? "???",
+             characteristic.value?.description ?? "???",
+             error.localizedDescription)
+      */
+      return
+    }
+    else if let data = characteristic.value {
+      commandAccum.add(data)
+    } else { // reset?
+      // too chatty?
+      os_log("null characteristic update from %s", peripheral.description)
+    }
+    peripheral.readValue(for: characteristic) // TODO: schedule in event of quiescense
   }
   
   func peripheral(_ peripheral: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?) {

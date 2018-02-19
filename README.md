@@ -25,6 +25,5 @@ Upon receiving "put" the server will wait for a string of the form "power-value-
 
 ## Todos
 - Decode sensor readings...
-- Clean termination of str and alt commands.
 - Graphical monitoring, for separate project.... dump to postgres and read with Grafana?
 - Simple navigation/hold attitude command, for a separate project.

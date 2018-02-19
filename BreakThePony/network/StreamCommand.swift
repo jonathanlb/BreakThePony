@@ -27,11 +27,10 @@ class StreamCommand : CommandExecutor {
     StreamCommand.runId += 1
     objc_sync_exit(StreamCommand.runId)
     
-    func f (sensor: CBUUID, value: Double) -> Void {
+    func f (sensorReading: [String: Double]) -> Void {
       do {
-        SensorDriverServer.sendToken(fd: self.ioF, token: GetCommand.marshallSensorReading(sensor: sensor, value: value))
+        try SensorDriverServer.sendToken(fd: self.ioF, token: GetCommand.marshallState(sensorReading))
       } catch {
-        // XXX how to catch/handle more than execeptions....
         copterState.unsubscribeSensors(tag: thisTag)
         os_log("terminating stream: %@", error.localizedDescription)
         close(self.ioF)

@@ -6,17 +6,16 @@
 //  Copyright © 2018 Jonathan Bredin. All rights reserved.
 //
 
-import CoreBluetooth
 import Foundation
 
 //
 // Interface to read sensor state and issue motor commands.
 //
 protocol CopterStateServer {
-  func readSensors() -> [CBUUID: Double]
-  func updateSensor(sensor: CBUUID, value: Double)
+  func readSensors() -> [String: Double]
+  func updateSensors(_ sensorMap: [String: Double])
   
-  func subscribeSensors(tag: String, callback: @escaping (CBUUID, Double) -> Void)
+  func subscribeSensors(tag: String, callback: @escaping ([String: Double]) -> Void)
   @discardableResult func unsubscribeSensors(tag: String) -> Bool
 
   func updateActuators(_ power: [Double])
@@ -26,10 +25,10 @@ protocol CopterStateServer {
 // Dummy state update
 //
 class SimpleCopterStateServer : CopterStateServer {
-  private var state: [CBUUID: Double] = [:]
-  private var callbacks: [String: (CBUUID, Double) -> Void] = [:]
+  private var state: [String: Double] = [:]
+  private var callbacks: [String: ([String: Double]) -> Void] = [:]
   
-  func readSensors() -> [CBUUID: Double] {
+  func readSensors() -> [String: Double] {
     objc_sync_enter(state)
     let result = self.state // really?
     objc_sync_exit(state)
@@ -37,7 +36,7 @@ class SimpleCopterStateServer : CopterStateServer {
     return result
   }
   
-  func subscribeSensors(tag: String, callback: @escaping (CBUUID, Double) -> Void) {
+  func subscribeSensors(tag: String, callback: @escaping ([String: Double]) -> Void) {
     objc_sync_enter(state)
     callbacks[tag] = callback
     objc_sync_exit(state)
@@ -46,11 +45,11 @@ class SimpleCopterStateServer : CopterStateServer {
   //
   // Update the sensor reading and notify all subscribers.
   //
-  func updateSensor(sensor: CBUUID, value: Double) {
-    updateState(sensor: sensor, value: value)
+  func updateSensors(_ sensorMap: [String: Double]) {
     objc_sync_enter(state)
+    updateState(sensorMap)
       for cb in self.callbacks.values {
-        cb(sensor, value)
+        cb(state)
       }
     objc_sync_exit(state)
   }
@@ -58,9 +57,11 @@ class SimpleCopterStateServer : CopterStateServer {
   //
   // Update the sensor state.
   //
-  private func updateState(sensor: CBUUID, value: Double) {
+  func updateState(_ sensorMap: [String: Double]) {
     objc_sync_enter(state)
-    self.state[sensor] = value
+    self.state = sensorMap
+    self.state.merge(sensorMap,
+                     uniquingKeysWith: {(current: Double, new: Double) in new })
     objc_sync_exit(state)
   }
   

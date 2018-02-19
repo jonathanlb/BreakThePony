@@ -26,6 +26,20 @@ class SensorDriverServerTests: XCTestCase {
     super.tearDown()
   }
   
+  // How to make xcode step over signal thrown?
+  func testSendBrokenPipe() throws {
+    let fds = makeSocket()
+    var errCaught = false
+    
+    do {
+      close(fds[0])
+      try SensorDriverServer.sendToken(fd: fds[1], token: "test")
+    } catch {
+      errCaught = true
+    }
+    XCTAssertTrue(errCaught)
+  }
+  
   func testCastSockAddr() {
     var sockAddr = sockaddr_in()
     let port: in_port_t = 1111
@@ -34,7 +48,7 @@ class SensorDriverServerTests: XCTestCase {
     // extract port from casted?
   }
   
-  func testAlternateCommand() { // XXX doesn't check power values sent
+  func testAlternateCommand() throws { // XXX doesn't check power values sent
     let state = SimpleCopterStateServer()
     let s = SensorDriverServer(copterState: state)
     let fds = makeSocket()
@@ -45,32 +59,32 @@ class SensorDriverServerTests: XCTestCase {
       free(fds)
     }
     
-    let id0 = CBUUID()
-    state.updateSensor(sensor: id0, value: 1.0)
+    let id0 = "pit"
+    state.updateSensors([id0: 1.0])
     let cmd = CommCommand(rawValue: "alt")
-    SensorDriverServer.sendToken(fd: fds[1], token: cmd!.rawValue)
-    SensorDriverServer.sendToken(fd: fds[1], token: "1.0, -1.0")
+    try SensorDriverServer.sendToken(fd: fds[1], token: cmd!.rawValue)
+    try SensorDriverServer.sendToken(fd: fds[1], token: "1.0, -1.0")
 
     dispatch.async {
       s.handleClientRequest(fd: fds[0])
     }
     
     let response = SensorDriverServer.readToken(fd: fds[1])
-    XCTAssertEqual(id0.description + ": 1.0", response)
+    XCTAssertEqual("\"" + id0 + "\": 1.0", response)
   }
   
-  func testGetCommand() {
+  func testGetCommand() throws {
     let state = SimpleCopterStateServer()
     let s = SensorDriverServer(copterState: state)
     let fds = makeSocket()
     
-    let id0 = CBUUID()
-    state.updateSensor(sensor: id0, value: 2.0)
+    let id0 = "pit"
+    state.updateSensors([id0: 2.0])
     let cmd = CommCommand(rawValue: "get")
-    SensorDriverServer.sendToken(fd: fds[1], token: cmd!.rawValue)
+    try SensorDriverServer.sendToken(fd: fds[1], token: cmd!.rawValue)
     s.handleClientRequest(fd: fds[0])
     let response = SensorDriverServer.readToken(fd: fds[1])
-    XCTAssertEqual(id0.description + ": 2.0", response)
+    XCTAssertEqual("\"" + id0 + "\": 2.0", response)
   }
   
   func testInstantiateConnection() throws {
@@ -97,7 +111,7 @@ class SensorDriverServerTests: XCTestCase {
     let _ = SensorDriverServer(copterState: state)
   }
   
-  func testPutCommand() {
+  func testPutCommand() throws {
     class LocalCopterState : SimpleCopterStateServer {
       var actuators = [0.0, 0.0, 0.0]
       override func updateActuators(_ power: [Double]) {
@@ -112,24 +126,24 @@ class SensorDriverServerTests: XCTestCase {
     }
     
     let cmd = CommCommand(rawValue: "put")
-    SensorDriverServer.sendToken(fd: fds[1], token: cmd!.rawValue)
-    SensorDriverServer.sendToken(fd: fds[1], token: "1.0, 2.0, -3.0")
+    try SensorDriverServer.sendToken(fd: fds[1], token: cmd!.rawValue)
+    try SensorDriverServer.sendToken(fd: fds[1], token: "1.0, 2.0, -3.0")
     s.handleClientRequest(fd: fds[0])
     XCTAssertEqual([1.0, 2.0, -3.0], state.actuators)
   }
   
-  func testReadToken() {
+  func testReadToken() throws {
     let fds = makeSocket()
     defer {
       free(fds)
     }
     let tokenSent = "Hello"
-    SensorDriverServer.sendToken(fd: fds[1], token: tokenSent + "\r\n")
+    try SensorDriverServer.sendToken(fd: fds[1], token: tokenSent + "\r\n")
     let tokenRead = SensorDriverServer.readToken(fd: fds[0])
     XCTAssertEqual(tokenSent, tokenRead)
   }
   
-  func testStreamCommand() {
+  func testStreamCommand() throws {
     let dispatch = DispatchQueue(
       label: "org.bredin.BreakThePony.stream_command_test",
       attributes: .concurrent)
@@ -138,27 +152,27 @@ class SensorDriverServerTests: XCTestCase {
     let fds = makeSocket()
     // don't defer/free with multithreading, hope OS cleans up....
     
-    let id0 = CBUUID()
+    let id0 = "pit"
     
-    state.updateSensor(sensor: id0, value: 1.0)
+    state.updateSensors([id0: 1.0])
     let cmd = CommCommand(rawValue: "str")
-    SensorDriverServer.sendToken(fd: fds[1], token: cmd!.rawValue)
+    try SensorDriverServer.sendToken(fd: fds[1], token: cmd!.rawValue)
     
     dispatch.async {
       s.handleClientRequest(fd: fds[0])
-      state.updateSensor(sensor: id0, value: 2.0)
-      state.updateSensor(sensor: id0, value: 3.0)
+      state.updateSensors([id0: 2.0])
+      state.updateSensors([id0: 3.0])
     }
     
     var response = SensorDriverServer.readToken(fd: fds[1])
-    XCTAssertEqual(id0.description + ": 2.0", response)
+    XCTAssertEqual("\"" + id0 + "\": 2.0", response)
     
     response = SensorDriverServer.readToken(fd: fds[1])
-    XCTAssertEqual(id0.description + ": 3.0", response)
+    XCTAssertEqual("\"" + id0 + "\": 3.0", response)
     
     // Different ordering?
-    state.updateSensor(sensor: id0, value: 4.0)
+    state.updateSensors([id0: 4.0])
     response = SensorDriverServer.readToken(fd: fds[1])
-    XCTAssertEqual(id0.description + ": 4.0", response)
+    XCTAssertEqual("\"" + id0 + "\": 4.0", response)
   }
 }

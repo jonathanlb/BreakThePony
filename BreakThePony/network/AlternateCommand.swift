@@ -23,8 +23,8 @@ class AlternateCommand : CommandExecutor {
       os_log("terminating alternate on %d", ioF)
       close(ioF)
     }
-    let get = GetCommand(copterState: copterState, f: ioF)
-    let put = PutCommand(copterState: copterState, f: ioF)
+    let get = GetCommand(copterState: copterState, f: ioF, closeOnRead: false)
+    let put = PutCommand(copterState: copterState, f: ioF, closeOnPut: false)
     while true {
       get.run()
       put.run()

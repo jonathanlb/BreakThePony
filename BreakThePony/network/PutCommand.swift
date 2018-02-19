@@ -12,16 +12,20 @@ import Foundation
 
 class PutCommand : CommandExecutor {
   private let copterState: CopterStateServer
+  private let closeOnPut: Bool
   let ioF: Int32
   
-  init(copterState: CopterStateServer, f: Int32) {
+  init(copterState: CopterStateServer, f: Int32, closeOnPut: Bool = true) {
     self.copterState = copterState
+    self.closeOnPut = closeOnPut
     ioF = f
   }
   
   func run() {
     let putCommand = SensorDriverServer.readToken(fd: ioF)
-    close(ioF)
+    if closeOnPut {
+      close(ioF)
+    }
     let newState = putCommand.split(separator: ",").map{
       Double($0.trimmingCharacters(in: [" "]))!
     }

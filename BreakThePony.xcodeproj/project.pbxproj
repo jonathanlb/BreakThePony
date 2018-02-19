@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AB098D0B20373C140016DABE /* CommandAccumulator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB098D0A20373C140016DABE /* CommandAccumulator.swift */; };
+		AB098D0C20373C140016DABE /* CommandAccumulator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB098D0A20373C140016DABE /* CommandAccumulator.swift */; };
 		AB3D57092010FE8F0075255B /* CentralBluetoothClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB3D57082010FE8F0075255B /* CentralBluetoothClient.swift */; };
 		AB576888200E7C2000A04B20 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB576887200E7C2000A04B20 /* main.swift */; };
 		AB576891200E7C9600A04B20 /* SensorDriverServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB576890200E7C9600A04B20 /* SensorDriverServer.swift */; };
@@ -49,6 +51,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		AB098D0A20373C140016DABE /* CommandAccumulator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandAccumulator.swift; sourceTree = "<group>"; };
 		AB3D57082010FE8F0075255B /* CentralBluetoothClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CentralBluetoothClient.swift; sourceTree = "<group>"; };
 		AB4C50FA20126C9000DBF37F /* BreakThePonyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BreakThePonyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		AB576884200E7C2000A04B20 /* BreakThePony */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = BreakThePony; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -116,6 +119,7 @@
 			isa = PBXGroup;
 			children = (
 				AB3D57082010FE8F0075255B /* CentralBluetoothClient.swift */,
+				AB098D0A20373C140016DABE /* CommandAccumulator.swift */,
 			);
 			path = bluetooth;
 			sourceTree = "<group>";
@@ -243,6 +247,7 @@
 				ABFBD308202CC7520076D87D /* StreamCommand.swift in Sources */,
 				ABDE2E5E202036EF00CB0FFB /* CopterStateServer.swift in Sources */,
 				ABDE2E5B201EC74C00CB0FFB /* GetCommand.swift in Sources */,
+				AB098D0C20373C140016DABE /* CommandAccumulator.swift in Sources */,
 				ABFFCE8D201273D200C522B3 /* BluetoothTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -258,6 +263,7 @@
 				ABDE2E632020536B00CB0FFB /* AlternateCommand.swift in Sources */,
 				ABDE2E6020203BEA00CB0FFB /* PutCommand.swift in Sources */,
 				AB576888200E7C2000A04B20 /* main.swift in Sources */,
+				AB098D0B20373C140016DABE /* CommandAccumulator.swift in Sources */,
 				ABDE2E5D20202F0F00CB0FFB /* CopterStateServer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -12,23 +12,21 @@
 //  Copyright © 2018 Jonathan Bredin. All rights reserved.
 //
 
-import CoreBluetooth
 import Foundation
+import os.log
 
 class GetCommand : CommandExecutor {
   private let copterState: CopterStateServer
+  private let closeOnRead: Bool
   let ioF: Int32
   
-  init(copterState: CopterStateServer, f: Int32) {
+  init(copterState: CopterStateServer, f: Int32, closeOnRead: Bool = true) {
     self.copterState = copterState
+    self.closeOnRead = closeOnRead
     ioF = f
   }
   
-  static func marshallSensorReading(sensor: CBUUID, value: Double) -> String {
-    return sensor.description + ": " + value.description
-  }
-  
-  static func marshallState(_ state: [CBUUID: Double]) -> String {
+  static func marshallState(_ state: [String: Double]) -> String {
     let stateStr = state.description
     return String(stateStr.dropFirst().dropLast())
   }
@@ -40,8 +38,14 @@ class GetCommand : CommandExecutor {
   
   func run() {
     let readings = copterState.readSensors()
-    SensorDriverServer.sendToken(fd: ioF,
-                                 token: GetCommand.marshallState(readings))
-    close(ioF)
+    do {
+      try SensorDriverServer.sendToken(fd: ioF,
+                                       token: GetCommand.marshallState(readings))
+    } catch {
+      os_log("error get command %d", errno)
+    }
+    if closeOnRead {
+      close(ioF)
+    }
   }
 }

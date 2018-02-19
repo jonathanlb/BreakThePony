@@ -36,6 +36,14 @@ func errStr(_ errno: Int32) -> String {
   return String(cString: strerror(errno))
 }
 
+func ignoreSigPipe(fd: Int32) {
+  var ignore = 1
+  signal(SIGPIPE, {(err: Int32) in os_log("signal %d", err) })
+  if 0 != setsockopt(fd, SOL_SOCKET, SO_NOSIGPIPE, &ignore, socklen_t(MemoryLayout.size(ofValue: ignore))) {
+    os_log("setsockopt error attempting to ignore SIGPIPE: %@", errStr(errno))
+  }
+}
+
 //
 //  Handle network requests to query quadcopter state and to send results.
 //
@@ -131,20 +139,27 @@ class SensorDriverServer {
     } catch SensorDriverError.listen(err) {
       os_log("cannot listen: %@", errStr(err))
       throw SensorDriverError.network(err)
+    } catch {
+      os_log("unhandled exception")
     }
   } // run
   
-  static func sendToken(fd: Int32, token: String) {
+  static func sendToken(fd: Int32, token: String) throws {
     var buff = UnsafePointer<Int8>((token as NSString).utf8String)
+    ignoreSigPipe(fd: fd)
     var numWritten = write(fd, buff, token.count)
     if numWritten != token.count {
-      os_log("only wrote %d of %d bytes: %@", numWritten, token.count, errStr(errno))
+      let errNum = errno
+      os_log("only wrote %d of %d bytes: %@", numWritten, token.count, errStr(errNum))
+      throw SensorDriverError.network(errNum)
     }
     
     buff = UnsafePointer<Int8>(("\r\n" as NSString).utf8String)
     numWritten = write(fd, buff, 2)
     if numWritten != 2 {
-      os_log("only wrote %d of 2 terminating bytes: %@", numWritten, errStr(errno))
+      let errNum = errno
+      os_log("only wrote %d of 2 terminating bytes: %@", numWritten, errStr(errNum))
+      throw SensorDriverError.network(errNum)
     }
   }
 }
@@ -198,6 +213,7 @@ class ServerConnection {
     os_log("accepting on port=%u", sockAddr.sin_port.bigEndian)
     var vSockLen = SOCK_LEN
     let toClientFd = accept(socketFd, ServerConnection.safeSockAddr(sa_in: sockAddr), &vSockLen)
+    ignoreSigPipe(fd: toClientFd)
     if (toClientFd < 0) {
       throw SensorDriverError.accept(errno)
     }
